@@ -14,6 +14,28 @@ class Users extends CI_Controller {
 	{
 		$this->load->view('login');
 	}
+
+	public function register()
+	{
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('username', 'Username', 'required');
+		$this->form_validation->set_rules('email', 'Email', 'required');
+		$this->form_validation->set_rules('password', 'Password', 'required');
+		$this->form_validation->set_rules('confirmPassword', 'Password Confirmation', 'required');
+
+		if($this->form_validation->run() == FALSE)
+		{
+			$this->session->set_flashdata('errors', validation_errors());
+			redirect('/'); //if form doesn't pass validation, prevent login, show errors on page.
+		}
+		else
+		{
+			$user = $this->input->post();
+			// var_dump($user);
+			// die('in register method');
+			$this->User->add_user($user);
+		}
+	}
 }
 
 ?>
