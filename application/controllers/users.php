@@ -31,10 +31,47 @@ class Users extends CI_Controller {
 		else
 		{
 			$user = $this->input->post();
-			// var_dump($user);
-			// die('in register method');
 			$this->User->add_user($user);
+
+			$userData = $this->User->getUserByEmail($this->input->post('email'));
+			if($userData)
+			{
+				$user = array(
+						'id' => $userData['id'],
+						'username' => $userData['username'],
+						'email' => $userData['email'],
+					);
+			}
+			$this->session->set_userdata('userInformation', $user);
+			redirect('/users/welcome');
 		}
+	}
+
+	public function login()
+	{
+		$user = $this->input->post();
+		$email = $this->input->post('email');
+		$password = $this->input->post('password');
+		$userData = $this->User->getUserByEmail($email);
+
+		if($password == $userData['password'])
+		{
+			$user = array(
+					'id' => $userData['id'],
+					'username' => $userData['username'],
+					'email' => $userData['email']
+				);
+		}
+		$this->session->set_userdata('userInformation', $user);
+		redirect('/users/welcome');
+	}
+
+	public function welcome()
+	{
+		$view_data['user'] = $this->session->userdata('userInformation');
+		// var_dump($view_data['user']);
+		// die('in welcome');
+		$this->load->view('home', $view_data);
 	}
 }
 

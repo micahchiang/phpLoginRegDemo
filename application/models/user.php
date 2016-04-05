@@ -11,5 +11,12 @@ public function add_user($user)
 	return $this->db->query($query, $values);
 }
 
+public function getUserByEmail($email)
+{
+	$query = "SELECT id, username, email, password FROM users WHERE email = ?";
+	$values = array($email);
+	return $this->db->query($query, $values) -> row_array();
+}
+
 }
 ?>
