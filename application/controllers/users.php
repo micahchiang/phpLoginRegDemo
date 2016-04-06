@@ -66,6 +66,34 @@ class Users extends CI_Controller {
 		redirect('/users/welcome');
 	}
 
+	public function changeUserPassword()
+	{
+		$this->load->Library('form_validation');
+		$this->form_validation->set_rules('newPassword', 'Password', 'required');
+		$this->form_validation->set_rules('confirmNewPassword', 'Password Confirmation', 'required');
+		$password = $this->input->post('newPassword');
+		if($this->form_validation->run() == FALSE)
+		{
+			$this->session->set_flashdata('errors', validation_errors());
+			redirect('/users/welcome');
+		}
+		if ($password != $this->input->post('confirmNewPassword'))
+		{
+			$this->session->set_flashdata('alert', 'Passwords need to match');
+			redirect('/users/welcome');
+		}
+		else
+		{
+			$user = $this->session->userdata('userInformation');
+			$id = $user['id'];
+			// var_dump($password);
+			// die('in updatepassword');
+			$this->User->updatePassword($password, $id);
+			$this->session->set_flashdata('success', 'password has been updated!');
+			redirect('/users/welcome');
+		}
+	}
+
 	public function welcome()
 	{
 		$view_data['user'] = $this->session->userdata('userInformation');

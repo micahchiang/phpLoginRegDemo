@@ -26,25 +26,19 @@
 	<div id = 'wrapper'>
 	<h4>Hello, <?= $user['username'] ?></h4>
 
-	<a id = 'getMembers' href = "#">All Members</a>
 	<a id ='updatePassword' href = "#">Update Password</a>
+	<a id = 'getMembers' href = "#">All Members</a>
 
 	<div id = 'infoBox'>
-		<table>
-			<tbody>
-				<?php
-					foreach($members as $member)
-					{
-				?>
-						<tr>
-							<td><?= $member['username']?></td>
-						</tr>
-				<?php 
-						}
-				?>			
-			</tbody>
-		</table>
+			<form action = '/users/changeUserPassword' method = 'post'>
+				<label>New Password:</label><input type = "password" name = "newPassword">
+				<label>Confirm New Password:</label><input type = "password" name = "confirmNewPassword">
+				<input type = "submit" value = "update">
+			</form>
 	</div>
+	<p><?= $this->session->flashdata('alert') ?></p>
+	<p><?= $this->session->flashdata('errors')?></p>
+	<p><?= $this->session->flashdata('success')?></p>
 	</div>
 </body>
 </html>
