@@ -12,8 +12,10 @@
 			<form action = "/users/login" method = "post">
 				<label>Email:</label><input type = "text" name = "email">
 				<label>Password:</label><input type = "password" name = "password">
+				<label>Remember Me</label><input type = "checkbox" name = "rememberMe">
 				<input type = "submit" value = "login">
 			</form>	
+			<?= $this->session->flashdata('loginError') ?>
 		</div>
 		<div id = 'register'>
 			<h4>First time here? Register below!</h4>

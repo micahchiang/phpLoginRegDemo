@@ -28,6 +28,7 @@
 
 	<a id ='updatePassword' href = "#">Update Password</a>
 	<a id = 'getMembers' href = "#">All Members</a>
+	<a href = '/users/logout'>Logout</a>
 
 	<div id = 'infoBox'>
 			<form action = '/users/changeUserPassword' method = 'post'>

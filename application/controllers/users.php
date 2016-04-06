@@ -8,11 +8,17 @@ class Users extends CI_Controller {
 		parent::__construct();
 		$this->output->enable_profiler(TRUE);
 		$this->load->model('User'); //connects to user model to input data into db.
+		$this->load->helper('cookie');
 	}
 
 	public function index()
 	{
-		$this->load->view('login');
+		if ($this->session->userdata('userInformation')){
+			redirect('/users/welcome');
+		}
+		else {
+			$this->load->view('login');
+		}
 	}
 
 	public function register()
@@ -49,23 +55,46 @@ class Users extends CI_Controller {
 
 	public function login()
 	{
+		$this->load->library('form_validation');
 		$user = $this->input->post();
 		$email = $this->input->post('email');
 		$password = $this->input->post('password');
 		$userData = $this->User->getUserByEmail($email);
 
+		$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+		$this->form_validation->set_rules('password', 'Password', 'required');
+		if($this->form_validation->run() == FALSE)
+		{
+			$this->session->set_flashdata('errors', validation_errors());
+			redirect('/'); //if form doesn't pass validation, prevent login, show errors on page.
+		}
+
 		if($password == $userData['password'])
 		{
+			if($this->input->post('rememberMe')){
+				$this->session->sess_expriration = 86400;
+			}
 			$user = array(
 					'id' => $userData['id'],
 					'username' => $userData['username'],
 					'email' => $userData['email']
 				);
-		}
 		$this->session->set_userdata('userInformation', $user);
 		redirect('/users/welcome');
+		}
+		else {
+			$this->session->set_flashdata('loginError', 'username or password incorrect');
+			redirect('/');
+		}
+
 	}
 
+	public function logout()
+	{
+		$this->session->sess_destroy();
+		redirect('/');
+	}
+//Update Password
 	public function changeUserPassword()
 	{
 		$this->load->Library('form_validation');
@@ -93,7 +122,7 @@ class Users extends CI_Controller {
 			redirect('/users/welcome');
 		}
 	}
-
+//sets data, loads view.
 	public function welcome()
 	{
 		$view_data['user'] = $this->session->userdata('userInformation');
@@ -116,7 +145,7 @@ class Users extends CI_Controller {
 		$view_data['members'] = $members;
 		$this->load->view('/partials/allMembers', $view_data);
 	}
-//custom validation function
+
 
 }
 
