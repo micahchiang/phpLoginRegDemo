@@ -26,8 +26,17 @@ class Users extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('username', 'Username', 'required');
 		$this->form_validation->set_rules('email', 'Email', 'required|valid_email|is_unique[users.email]');
-		$this->form_validation->set_rules('password', 'Password', 'required|min_length[8]|callback_paramCheck');
+		$this->form_validation->set_rules('password', 'Password', 'required|min_length[8]');
 		$this->form_validation->set_rules('confirmPassword', 'Password Confirmation', 'required|matches[password]');
+
+		$password = $this->input->post('password');
+
+		// var_dump($password);
+		// die('in register');
+		if($this->password_check($password) == FALSE){
+			$this->session->set_flashdata('stronger', 'password needs at least one number and one capital letter');
+			redirect('/');
+		}
 
 		if($this->form_validation->run() == FALSE)
 		{
@@ -38,6 +47,11 @@ class Users extends CI_Controller {
 		{
 			$user = $this->input->post();
 			$this->User->add_user($user);
+
+			if($this->input->post('rememberMe'))
+			{
+				$this->session->sess_expriration = 86400;
+			}
 
 			$userData = $this->User->getUserByEmail($this->input->post('email'));
 			if($userData)
@@ -145,7 +159,15 @@ class Users extends CI_Controller {
 		$view_data['members'] = $members;
 		$this->load->view('/partials/allMembers', $view_data);
 	}
-
+//validation
+	public function password_check($str)
+	{
+		$test = strtolower($str);
+		if (!is_numeric($str) && $test == $str){
+			return FALSE;
+		}
+		return TRUE;
+	}
 
 }
 
