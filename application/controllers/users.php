@@ -19,9 +19,9 @@ class Users extends CI_Controller {
 	{
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('username', 'Username', 'required');
-		$this->form_validation->set_rules('email', 'Email', 'required');
-		$this->form_validation->set_rules('password', 'Password', 'required');
-		$this->form_validation->set_rules('confirmPassword', 'Password Confirmation', 'required');
+		$this->form_validation->set_rules('email', 'Email', 'required|valid_email|is_unique[users.email]');
+		$this->form_validation->set_rules('password', 'Password', 'required|min_length[8]|callback_paramCheck');
+		$this->form_validation->set_rules('confirmPassword', 'Password Confirmation', 'required|matches[password]');
 
 		if($this->form_validation->run() == FALSE)
 		{
@@ -116,6 +116,8 @@ class Users extends CI_Controller {
 		$view_data['members'] = $members;
 		$this->load->view('/partials/allMembers', $view_data);
 	}
+//custom validation function
+
 }
 
 ?>
