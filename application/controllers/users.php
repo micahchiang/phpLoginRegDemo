@@ -13,12 +13,24 @@ class Users extends CI_Controller {
 
 	public function index()
 	{
-		if ($this->session->userdata('userInformation')){
+		if ($this->input->cookie('testname', TRUE)){ 
+			// var_dump($this->input->cookie('testname', TRUE));
+			// die('in index()');
+			$email = $this->input->cookie('testname');
+			$userData = $this->User->getUserByEmail($email);
+			if ($userData){
+				$user = array(
+					'id' => $userData['id'],
+					'username' => $userData['username'],
+					'email' => $userData['email'],
+					);
+				}
+			$this->session->set_userdata('userInformation', $user);
 			redirect('/users/welcome');
 		}
-		else {
+		// else {
 			$this->load->view('login');
-		}
+		// }
 	}
 
 	public function register()
@@ -50,7 +62,12 @@ class Users extends CI_Controller {
 
 			if($this->input->post('rememberMe'))
 			{
-				$this->session->sess_expriration = 86400;
+				$cookie = array(
+						'name' => 'testname',
+						'value' => $user['email'],
+						'expire' => '86400'
+					);
+				$this->input->set_cookie($cookie);	
 			}
 
 			$userData = $this->User->getUserByEmail($this->input->post('email'));
@@ -86,7 +103,12 @@ class Users extends CI_Controller {
 		if($password == $userData['password'])
 		{
 			if($this->input->post('rememberMe')){
-				$this->session->sess_expriration = 86400;
+				$cookie = array(
+						'name' => 'testname',
+						'value' => $user['email'],
+						'expire' => '86400'
+					);
+				$this->input->set_cookie($cookie);	
 			}
 			$user = array(
 					'id' => $userData['id'],
@@ -105,6 +127,7 @@ class Users extends CI_Controller {
 
 	public function logout()
 	{
+		delete_cookie('testname');
 		$this->session->sess_destroy();
 		redirect('/');
 	}
