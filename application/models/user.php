@@ -18,5 +18,11 @@ public function getUserByEmail($email)
 	return $this->db->query($query, $values) -> row_array();
 }
 
+public function getAllUsers()
+{
+	$query = "SELECT * FROM users";
+	return $this->db->query($query) -> result_array();
+}
+
 }
 ?>

@@ -69,9 +69,24 @@ class Users extends CI_Controller {
 	public function welcome()
 	{
 		$view_data['user'] = $this->session->userdata('userInformation');
-		// var_dump($view_data['user']);
+		$members = $this->User->getAllUsers();
+		$view_data['members'] = $members;
+		// var_dump($members);
 		// die('in welcome');
 		$this->load->view('home', $view_data);
+	}
+
+//functions for partials
+	public function updatePassword()
+	{
+		$this->load->view('/partials/updatePassword');
+	}
+
+	public function getMembers()
+	{
+		$members = $this->User->getAllUsers();
+		$view_data['members'] = $members;
+		$this->load->view('/partials/allMembers', $view_data);
 	}
 }
 
